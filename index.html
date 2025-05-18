@@ -1,0 +1,161 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+  <meta name="theme-color" content="#0d6efd" />
+  <meta name="description" content="A dynamic CO₂ emissions counter that calculates website carbon footprint using JS. Built by Geek Circuit." />
+  <meta name="author" content="Jai Krishna Tavva, Geek Circuit" />
+  <meta name="keywords" content="carbon footprint, website emissions, co2 counter, geek circuit, green web, energy usage, javascript tool" />
+  <link rel="icon" href="assets/favicon.png" type="image/png" />
+  <title>Live Carbon Counter - Geek Circuit</title>
+  <style>
+    * {
+      box-sizing: border-box;
+    }
+    body, html {
+      height: 100%;
+      margin: 0;
+      padding: 0;
+      background: linear-gradient(135deg, #9afdf9 0%, #fed6e3 100%);
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      flex-direction: column;
+      padding: 1rem;
+    }
+    .logo-img {
+      margin-bottom: 1.5rem;
+      max-width: 140px;
+      height: auto;
+      user-select: none;
+    }
+    .counter-card {
+      background: white;
+      padding: 2rem;
+      border-radius: 1rem;
+      box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+      text-align: center;
+      max-width: 360px;
+      width: 100%;
+    }
+    .counter-value {
+      font-size: 3rem;
+      font-weight: 700;
+      margin-bottom: 0.5rem;
+      transition: color 0.5s ease;
+    }
+    .counter-label {
+      font-size: 1.2rem;
+      font-weight: 600;
+      color: #319795;
+      margin-bottom: 1.2rem;
+    }
+    .subtext {
+      font-size: 1rem;
+      color: #4a5568;
+      margin-bottom: 0.5rem;
+    }
+    footer {
+      margin-top: 1rem;
+      font-size: 0.85rem;
+      color: #2c7a7b;
+      font-weight: 600;
+      user-select: none;
+      text-align: center;
+    }
+
+    @media (max-width: 480px) {
+      .counter-card {
+        padding: 1.5rem;
+      }
+      .counter-value {
+        font-size: 2.5rem;
+      }
+      .counter-label {
+        font-size: 1rem;
+      }
+      .subtext {
+        font-size: 0.95rem;
+      }
+      .logo-img {
+        max-width: 120px;
+      }
+    }
+  </style>
+</head>
+<body>
+  <a href="https://www.geekcircuit.com" target="_blank" rel="noopener noreferrer">
+    <img src="assets/logo.webp" alt="Geek Circuit Logo" class="logo-img" />
+  </a>
+
+  <div class="counter-card">
+    <h2>Carbon Counter</h2>
+    <div class="counter-value" id="carbonCount">Calculating...</div>
+    <div class="counter-label">Estimated Carbon Emission</div>
+    <p class="subtext">Based on page size and resource usage.</p>
+    <p class="subtext">
+      <a href="https://www.geekcircuit.com/add-co2-emission-badge-to-website/" 
+         target="_blank" 
+         rel="noopener noreferrer" 
+         style="text-decoration: underline;font-weight: 500;">
+        Want this counter on your website? Learn how →
+      </a>
+    </p>
+  </div>
+
+  <footer>
+    &copy; <span id="year"></span> Geek Circuit. All Rights Reserved.
+  </footer>
+
+  <script>
+    function getTotalResourceSizeMB() {
+      const resources = performance.getEntriesByType('resource');
+      let totalBytes = 0;
+      for (const res of resources) {
+        if (res.transferSize) {
+          totalBytes += res.transferSize;
+        } else if (res.encodedBodySize) {
+          totalBytes += res.encodedBodySize;
+        }
+      }
+      return totalBytes / (1024 * 1024);
+    }
+
+    function getColorByEmission(emission) {
+      if (emission <= 0.5) return '#2f855a';    // green
+      if (emission <= 1.5) return '#d69e2e';    // yellow
+      return '#c53030';                         // red
+    }
+
+    function animateCounter(targetValue, duration = 2000, steps = 60) {
+      const carbonCountEl = document.getElementById('carbonCount');
+      let currentStep = 0;
+
+      function step() {
+        currentStep++;
+        const progress = currentStep / steps;
+        const value = (targetValue * progress).toFixed(2);
+        carbonCountEl.textContent = `${value}g CO₂`;
+        carbonCountEl.style.color = getColorByEmission(parseFloat(value));
+
+        if (currentStep < steps) {
+          requestAnimationFrame(step);
+        }
+      }
+
+      step();
+    }
+
+    document.getElementById('year').textContent = new Date().getFullYear();
+
+    window.addEventListener('load', () => {
+      const pageSizeMB = getTotalResourceSizeMB();
+      const co2Emission = pageSizeMB * 0.8;
+      animateCounter(co2Emission > 0 ? co2Emission : 0.01);
+    });
+  </script>
+</body>
+</html>
