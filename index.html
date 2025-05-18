@@ -14,17 +14,23 @@
     * {
       box-sizing: border-box;
     }
-    body, html {
+    html {
       height: 100%;
       margin: 0;
       padding: 0;
+    }
+    body {
+      min-height: 100vh;
+      margin: 0;
+      padding: 1rem;
       background: linear-gradient(135deg, #9afdf9 0%, #fed6e3 100%);
+      background-repeat: no-repeat;
+      background-attachment: fixed;
       display: flex;
       justify-content: center;
       align-items: center;
       font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
       flex-direction: column;
-      padding: 1rem;
     }
     .logo-img {
       margin-bottom: 1.5rem;
