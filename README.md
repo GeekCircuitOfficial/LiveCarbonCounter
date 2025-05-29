@@ -11,7 +11,7 @@ This lightweight tool estimates your website's carbon footprint in real-time usi
 - 🧠 Educational: Raise awareness about digital carbon emissions
 
 ## 🔗 Live Demo
-
+![Screenshot of Live Carbon Counter](https://github.com/user-attachments/assets/f8dd92f9-7863-436f-a76c-a0748a0fd338)
 👉 [See Live Example](https://example.geekcircuit.com/live-carbon-counter/)
 
 ✅ Bonus: We've implemented this counter in the footer of our own site —  
@@ -35,9 +35,6 @@ This script reads your website’s resource usage via the [`PerformanceResourceT
 │ ├── logo.webp
 │ └── favicon.png
 ```
-## 🖼️ Screenshot
-
-![Screenshot of Live Carbon Counter](https://www.geekcircuit.com/wp-content/uploads/2025/05/03c7c0ace395d80182db07ae2c30f034-1024x450.png)
 
 ## 🛠️ Customization
 
