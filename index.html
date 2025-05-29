@@ -4,13 +4,72 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <meta http-equiv="X-UA-Compatible" content="IE=edge" />
-  <meta name="theme-color" content="#0d6efd" />
+  <meta name="theme-color" content="#4a90e2" />
   <meta name="description" content="A dynamic CO₂ emissions counter that calculates website carbon footprint using JS. Built by Geek Circuit." />
   <meta name="author" content="Jai Krishna Tavva, Geek Circuit" />
   <meta name="keywords" content="carbon footprint, website emissions, co2 counter, geek circuit, green web, energy usage, javascript tool" />
-  <link rel="icon" href="assets/favicon.png" type="image/png" />
+  <link rel="icon" href="https://assets.geekcircuit.com/img/favicon/favicon.png" type="image/png" />
   <title>Live Carbon Counter - Geek Circuit</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700;800&display=swap" rel="stylesheet">
   <style>
+    :root {
+      /* Light Mode Colors */
+      --primary-gradient-start: #a1c4fd;
+      --primary-gradient-end: #c2e9fb;
+      --body-bg: linear-gradient(135deg, var(--primary-gradient-start) 0%, var(--primary-gradient-end) 100%);
+      --text-color-dark: #2d3748;
+      --text-color-medium: #4a5568;
+      --card-bg: #ffffff;
+      --link-color: #4299e1;
+      --footer-color: #2b6cb0;
+      --github-color: #333; /* Dark color for light mode */
+      --faq-border-color: #edf2f7;
+
+      /* Accent Colors (for emission values) */
+      --accent-color-green: #38a169;
+      --accent-color-yellow: #d69e2e;
+      --accent-color-red: #e53e3e;
+
+      /* Toggle Colors (Light Mode) */
+      --toggle-bg-light: #f0f0f0;
+      --toggle-border-light: #ccc;
+      --toggle-icon-light: #ffc107; /* Sun yellow */
+      --toggle-shadow-light: rgba(0, 0, 0, 0.15);
+
+      /* Card 3D Effect */
+      --card-shadow: 0 20px 40px rgba(0,0,0,0.18), 0 5px 15px rgba(0,0,0,0.1); /* Deeper shadow */
+      --card-shadow-hover: 0 25px 50px rgba(0,0,0,0.25), 0 8px 20px rgba(0,0,0,0.15);
+    }
+
+    body.dark-mode {
+      /* Dark Mode Colors */
+      --primary-gradient-start: #1a202c;
+      --primary-gradient-end: #2d3748;
+      --body-bg: linear-gradient(135deg, var(--primary-gradient-start) 0%, var(--primary-gradient-end) 100%);
+      --text-color-dark: #f7fafc;
+      --text-color-medium: #cbd5e0;
+      --card-bg: #1a202c;
+      --link-color: #81e6d9;
+      --footer-color: #a0aec0;
+      --github-color: #81e6d9; /* Lighter color for dark mode */
+      --faq-border-color: #4a5568;
+
+      /* Accent Colors (for emission values) in Dark Mode - adjusted for contrast */
+      --accent-color-green: #68d391; /* Lighter green */
+      --accent-color-yellow: #ecc94b; /* Lighter yellow */
+      --accent-color-red: #fc8181; /* Lighter red */
+
+      /* Toggle Colors (Dark Mode) */
+      --toggle-bg-dark: #2d3748;
+      --toggle-border-dark: #4a5568;
+      --toggle-icon-dark: #a0aec0; /* Moon grey */
+      --toggle-shadow-dark: rgba(0, 0, 0, 0.3);
+
+      /* Card 3D Effect */
+      --card-shadow: 0 20px 40px rgba(0,0,0,0.3), 0 5px 15px rgba(0,0,0,0.2); /* Deeper shadow for dark mode */
+      --card-shadow-hover: 0 25px 50px rgba(0,0,0,0.4), 0 8px 20px rgba(0,0,0,0.25);
+    }
+
     * {
       box-sizing: border-box;
     }
@@ -22,145 +81,497 @@
     body {
       min-height: 100vh;
       margin: 0;
-      padding: 1rem;
-      background: linear-gradient(135deg, #9afdf9 0%, #fed6e3 100%);
+      padding: 1.5rem;
+      background: var(--body-bg);
       background-repeat: no-repeat;
       background-attachment: fixed;
       display: flex;
       justify-content: center;
       align-items: center;
-      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      font-family: 'Inter', sans-serif;
       flex-direction: column;
+      color: var(--text-color-dark);
+      transition: background 0.5s ease, color 0.5s ease; /* Smoother transition */
     }
-    .logo-img {
-      margin-bottom: 1.5rem;
-      max-width: 140px;
+    .logo-container {
+      margin-bottom: 2rem;
+      max-width: 160px;
       height: auto;
       user-select: none;
+      filter: drop-shadow(0 4px 8px rgba(0,0,0,0.15));
+      transition: filter 0.5s ease;
     }
+    .logo-img {
+      max-width: 100%;
+      height: auto;
+      display: block;
+    }
+
     .counter-card {
-      background: white;
-      padding: 2rem;
-      border-radius: 1rem;
-      box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+      background: var(--card-bg);
+      padding: 2.5rem;
+      border-radius: 1.25rem;
+      /* Using consolidated shadow variables */
+      box-shadow: var(--card-shadow);
       text-align: center;
-      max-width: 360px;
+      max-width: 400px;
       width: 100%;
+      transform: translateY(0);
+      transition: transform 0.3s ease, box-shadow 0.3s ease, background 0.5s ease, color 0.5s ease;
     }
-    .counter-value {
-      font-size: 3rem;
+    .counter-card:hover {
+        transform: translateY(-8px); /* More pronounced lift */
+        box-shadow: var(--card-shadow-hover); /* More pronounced shadow on hover */
+    }
+    h2 {
+      font-size: 1.8rem;
       font-weight: 700;
-      margin-bottom: 0.5rem;
+      margin-top: 0;
+      margin-bottom: 1.5rem;
+      color: var(--text-color-dark);
       transition: color 0.5s ease;
     }
+    .counter-value {
+      font-size: 3.8rem;
+      font-weight: 800;
+      margin-bottom: 0.75rem;
+      transition: color 0.5s ease;
+      letter-spacing: -0.05em;
+    }
     .counter-label {
-      font-size: 1.2rem;
+      font-size: 1.3rem;
       font-weight: 600;
-      color: #319795;
-      margin-bottom: 1.2rem;
+      color: var(--accent-color-green); /* Stays green by default */
+      margin-bottom: 1.8rem;
+      transition: color 0.5s ease;
     }
     .subtext {
-      font-size: 1rem;
-      color: #4a5568;
-      margin-bottom: 0.5rem;
+      font-size: 1.05rem;
+      color: var(--text-color-medium);
+      margin-bottom: 0.8rem;
+      line-height: 1.5;
+      transition: color 0.5s ease;
     }
+    .subtext a {
+      color: var(--link-color);
+      text-decoration: none;
+      font-weight: 600;
+      transition: color 0.3s ease;
+    }
+    .subtext a:hover {
+      color: #3182ce;
+      text-decoration: underline;
+    }
+
+    .faq-box {
+        margin-top: 1.5rem;
+        padding-top: 1rem;
+        border-top: 1px solid var(--faq-border-color);
+        font-size: 0.95rem;
+        color: var(--text-color-medium);
+        text-align: left;
+        transition: border-color 0.5s ease, color 0.5s ease;
+    }
+    .faq-box h3 {
+        font-size: 1.1rem;
+        margin-top: 0;
+        margin-bottom: 1rem;
+        color: var(--text-color-dark);
+        font-weight: 700;
+        text-align: center;
+        transition: color 0.5s ease;
+    }
+    .faq-item {
+        margin-bottom: 1rem;
+    }
+    .faq-question {
+        font-weight: 600;
+        cursor: pointer;
+        padding: 0.5rem 0;
+        border-bottom: 1px dashed var(--faq-border-color);
+        margin-bottom: 0.3rem;
+        color: var(--text-color-dark);
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        transition: border-color 0.5s ease, color 0.5s ease;
+    }
+    .faq-question::after {
+        content: '+';
+        font-size: 1.2rem;
+        font-weight: bold;
+        transition: transform 0.2s ease;
+    }
+    .faq-question.open::after {
+        content: '-';
+    }
+    .faq-answer {
+        padding: 0.5rem 0;
+        display: none; /* Controlled by JS for animation */
+        line-height: 1.6;
+        max-height: 0; /* Used for JS animation */
+        overflow: hidden;
+        opacity: 0;
+        transition: max-height 0.5s ease-out, opacity 0.5s ease-out;
+    }
+    .faq-answer.open {
+        display: block;
+        opacity: 1;
+    }
+
+
     footer {
-      margin-top: 1rem;
-      font-size: 0.85rem;
-      color: #2c7a7b;
+      margin-top: 2rem;
+      font-size: 0.9rem;
+      color: var(--footer-color);
       font-weight: 600;
       user-select: none;
       text-align: center;
+      opacity: 0.9;
+      transition: color 0.5s ease, opacity 0.5s ease;
+    }
+    footer a {
+        color: var(--footer-color);
+        text-decoration: none;
+        margin: 0 0.5rem;
+        transition: color 0.3s ease;
+    }
+    footer a:hover {
+        color: #1a4f89;
+        text-decoration: underline;
+    }
+    footer a.github-link {
+        color: var(--github-color); /* Uses dynamic variable */
+    }
+    footer a.github-link:hover {
+        color: var(--text-color-dark); /* Changed hover to a more generic dark mode variable */
+    }
+
+    /* Dark Mode Toggle Icon Styling */
+    .dark-mode-toggle {
+        position: fixed;
+        bottom: 20px; /* Right-bottom position */
+        right: 20px;
+        width: 50px; /* Size of the toggle button */
+        height: 50px;
+        border-radius: 50%;
+        background: var(--toggle-bg-light);
+        border: 2px solid var(--toggle-border-light);
+        cursor: pointer;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        box-shadow: 0 4px 15px var(--toggle-shadow-light);
+        transition: background 0.5s ease, border-color 0.5s ease, box-shadow 0.5s ease;
+        z-index: 1000;
+    }
+
+    .dark-mode-toggle::before {
+        content: '';
+        width: 30px; /* Size of the sun/moon icon */
+        height: 30px;
+        border-radius: 50%;
+        background-color: var(--toggle-icon-light); /* Sun color */
+        transition: background-color 0.5s ease, transform 0.5s ease;
+    }
+
+    /* Dark mode specific styles for the toggle */
+    body.dark-mode .dark-mode-toggle {
+        background: var(--toggle-bg-dark);
+        border-color: var(--toggle-border-dark);
+        box-shadow: 0 4px 15px var(--toggle-shadow-dark);
+    }
+
+    body.dark-mode .dark-mode-toggle::before {
+        background-color: var(--toggle-icon-dark); /* Moon color */
+        transform: translateX(-8px); /* Shift for moon crescent effect */
+        box-shadow: 8px 0 0 0 var(--toggle-bg-dark); /* Create crescent shape */
+    }
+
+    /* Loading Spinner (minimalistic) */
+    .spinner {
+        display: inline-block;
+        width: 20px;
+        height: 20px;
+        border: 3px solid rgba(0, 0, 0, 0.1);
+        border-radius: 50%;
+        border-top-color: var(--link-color);
+        animation: spin 1s ease-in-out infinite;
+        vertical-align: middle;
+        margin-left: 8px;
+    }
+
+    .dark-mode .spinner {
+        border-color: rgba(255, 255, 255, 0.2);
+        border-top-color: var(--link-color);
+    }
+
+    @keyframes spin {
+        to { transform: rotate(360deg); }
     }
 
     @media (max-width: 480px) {
+      body {
+        padding: 1rem;
+      }
       .counter-card {
-        padding: 1.5rem;
+        padding: 2rem;
+        border-radius: 1rem;
+      }
+      h2 {
+        font-size: 1.6rem;
+        margin-bottom: 1.2rem;
       }
       .counter-value {
-        font-size: 2.5rem;
+        font-size: 3.2rem;
+        margin-bottom: 0.6rem;
       }
       .counter-label {
-        font-size: 1rem;
+        font-size: 1.1rem;
+        margin-bottom: 1.5rem;
       }
       .subtext {
         font-size: 0.95rem;
+        margin-bottom: 0.6rem;
       }
-      .logo-img {
-        max-width: 120px;
+      .logo-container {
+        max-width: 130px;
+        margin-bottom: 1.5rem;
+      }
+      footer {
+        margin-top: 1.5rem;
+        font-size: 0.8rem;
+      }
+      .faq-box {
+          font-size: 0.85rem;
+      }
+      .faq-box h3 {
+          font-size: 1rem;
+      }
+      .dark-mode-toggle {
+          width: 45px; /* Smaller size for mobile */
+          height: 45px;
+          bottom: 15px;
+          right: 15px;
+      }
+      .dark-mode-toggle::before {
+          width: 25px;
+          height: 25px;
+      }
+      body.dark-mode .dark-mode-toggle::before {
+          transform: translateX(-6px); /* Adjust shift for smaller moon */
+          box-shadow: 6px 0 0 0 var(--toggle-bg-dark);
       }
     }
   </style>
 </head>
 <body>
-  <a href="https://www.geekcircuit.com" target="_blank" rel="noopener noreferrer">
-    <img src="assets/logo.webp" alt="Geek Circuit Logo" class="logo-img" />
+    <button id="darkModeToggle" class="dark-mode-toggle" aria-label="Toggle dark mode"></button>
+
+  <a href="https://www.geekcircuit.com" target="_blank" rel="noopener noreferrer" class="logo-container" aria-label="Geek Circuit Homepage">
+    <img src="https://assets.geekcircuit.com/img/logo/light.svg" alt="Geek Circuit Logo" class="logo-img" id="logoImg" />
   </a>
 
   <div class="counter-card">
     <h2>Carbon Counter</h2>
-    <div class="counter-value" id="carbonCount">Calculating...</div>
+    <div class="counter-value" id="carbonCount" aria-live="polite" aria-atomic="true">
+        Calculating<span class="spinner"></span>
+    </div>
     <div class="counter-label">Estimated Carbon Emission</div>
-    <p class="subtext">Based on page size and resource usage.</p>
     <p class="subtext">
-      <a href="https://www.geekcircuit.com/add-co2-emission-badge-to-website/" 
-         target="_blank" 
-         rel="noopener noreferrer" 
-         style="text-decoration: underline;font-weight: 500;">
-        Want this counter on your website? Learn how →
+      <a href="https://www.geekcircuit.com/add-co2-emission-badge-to-website/"
+         target="_blank"
+         rel="noopener noreferrer">
+        Want this counter on your website? Learn how &rarr;
       </a>
     </p>
+
+    <div class="faq-box">
+        <h3>Frequently Asked Questions</h3>
+        <div class="faq-item">
+            <div class="faq-question">
+                What does this counter show?
+            </div>
+            <div class="faq-answer">
+                This counter estimates the carbon dioxide (CO₂) emissions generated by loading this specific webpage in your browser.
+            </div>
+        </div>
+        <div class="faq-item">
+            <div class="faq-question">
+                How is the carbon emission calculated?
+            </div>
+            <div class="faq-answer">
+                The calculation is based on the total amount of data transferred to load this page (including HTML, CSS, JavaScript, images, etc.) and an average global emission factor for data transfer (currently 0.8 grams of CO₂ per megabyte).
+            </div>
+        </div>
+        <div class="faq-item">
+            <div class="faq-question">
+                What does a lower carbon emission mean?
+            </div>
+            <div class="faq-answer">
+                A lower estimated carbon emission suggests that the webpage is more energy-efficient to load, requiring less data transfer and thus having a smaller environmental impact.
+            </div>
+        </div>
+        <div class="faq-item">
+            <div class="faq-question">
+                How can I reduce a website's carbon footprint?
+            </div>
+            <div class="faq-answer">
+                You can reduce a website's carbon footprint by optimizing images and videos, minifying HTML, CSS, and JavaScript, reducing the number of HTTP requests, implementing effective caching strategies, and designing for lower power consumption on user devices.
+            </div>
+        </div>
+    </div>
   </div>
 
   <footer>
     &copy; <span id="year"></span> Geek Circuit. All Rights Reserved.
+    <br>
+    <a href="https://github.com/geekcircuit/carbon-counter" target="_blank" rel="noopener noreferrer" class="github-link">View Source Code on GitHub</a>
   </footer>
 
   <script>
-    function getTotalResourceSizeMB() {
-      const resources = performance.getEntriesByType('resource');
-      let totalBytes = 0;
-      for (const res of resources) {
-        if (res.transferSize) {
-          totalBytes += res.transferSize;
-        } else if (res.encodedBodySize) {
-          totalBytes += res.encodedBodySize;
+    const EMISSION_FACTOR_PER_MB = 0.8; // grams of CO2 per megabyte
+
+    const darkModeToggle = document.getElementById('darkModeToggle');
+    const body = document.body;
+    const logoImg = document.getElementById('logoImg');
+    const carbonCountEl = document.getElementById('carbonCount');
+    const faqQuestions = document.querySelectorAll('.faq-question');
+
+    const LIGHT_LOGO_SRC = "https://assets.geekcircuit.com/img/logo/light.svg";
+    const DARK_LOGO_SRC = "https://assets.geekcircuit.com/img/logo/dark.svg"; // Assuming you have a dark version of the logo
+
+    // --- Utility Functions ---
+
+    function setDarkModePreference(isDark) {
+        localStorage.setItem('darkMode', isDark);
+    }
+
+    function getDarkModePreference() {
+        return localStorage.getItem('darkMode') === 'true';
+    }
+
+    function updateLogo(isDark) {
+        logoImg.src = isDark ? DARK_LOGO_SRC : LIGHT_LOGO_SRC;
+    }
+
+    // Removed getTotalResourceSizeKB as dataTransferred section is removed.
+    // Instead, I'll keep the logic to get total bytes for carbon calculation.
+    function getTotalResourceSizeBytes() {
+        if (!performance || !performance.getEntriesByType) {
+            console.warn("Performance API not fully supported. Cannot calculate resource size.");
+            return 0;
         }
-      }
-      return totalBytes / (1024 * 1024);
+
+        const resources = performance.getEntriesByType('resource');
+        let totalBytes = 0;
+        for (const res of resources) {
+            totalBytes += res.transferSize || res.encodedBodySize || 0;
+        }
+        return totalBytes;
     }
 
     function getColorByEmission(emission) {
-      if (emission <= 0.5) return '#2f855a';    // green
-      if (emission <= 1.5) return '#d69e2e';    // yellow
-      return '#c53030';                         // red
+      const rootStyle = getComputedStyle(document.documentElement);
+      const accentGreen = rootStyle.getPropertyValue('--accent-color-green').trim();
+      const accentYellow = rootStyle.getPropertyValue('--accent-color-yellow').trim();
+      const accentRed = rootStyle.getPropertyValue('--accent-color-red').trim();
+
+      if (emission <= 0.5) return accentGreen; // Lower emissions
+      if (emission <= 1.5) return accentYellow; // Medium emissions
+      return accentRed; // Higher emissions
     }
 
-    function animateCounter(targetValue, duration = 2000, steps = 60) {
-      const carbonCountEl = document.getElementById('carbonCount');
-      let currentStep = 0;
+    function animateCounter(targetValue, duration = 2000) {
+      const start = performance.now();
+      const initialValue = 0;
 
-      function step() {
-        currentStep++;
-        const progress = currentStep / steps;
-        const value = (targetValue * progress).toFixed(2);
-        carbonCountEl.textContent = `${value}g CO₂`;
-        carbonCountEl.style.color = getColorByEmission(parseFloat(value));
+      function step(timestamp) {
+        const elapsed = timestamp - start;
+        const progress = Math.min(elapsed / duration, 1);
+        const easedProgress = 1 - Math.pow(1 - progress, 3);
+        const value = (initialValue + (targetValue - initialValue) * easedProgress);
 
-        if (currentStep < steps) {
+        carbonCountEl.textContent = `${value.toFixed(2)}g CO₂`;
+        carbonCountEl.style.color = getColorByEmission(value);
+
+        if (progress < 1) {
           requestAnimationFrame(step);
+        } else {
+            carbonCountEl.textContent = `${targetValue.toFixed(2)}g CO₂`;
+            carbonCountEl.style.color = getColorByEmission(targetValue);
         }
       }
-
-      step();
+      requestAnimationFrame(step);
     }
 
-    document.getElementById('year').textContent = new Date().getFullYear();
+    // --- Main Logic ---
 
-    window.addEventListener('load', () => {
-      const pageSizeMB = getTotalResourceSizeMB();
-      const co2Emission = pageSizeMB * 0.8;
-      animateCounter(co2Emission > 0 ? co2Emission : 0.01);
+    function calculateAndDisplayCarbonFootprint() {
+        // Initial loading states
+        carbonCountEl.innerHTML = `Calculating<span class="spinner"></span>`;
+
+        const totalBytes = getTotalResourceSizeBytes();
+        const pageSizeMB = totalBytes / (1024 * 1024); // Convert bytes to MB
+
+        let co2EmissionGrams = pageSizeMB * EMISSION_FACTOR_PER_MB;
+
+        // Ensure a minimum value is displayed
+        if (co2EmissionGrams < 0.01) {
+            co2EmissionGrams = 0.01;
+        }
+
+        animateCounter(co2EmissionGrams);
+    }
+
+    // --- Event Listeners and Initial Setup ---
+
+    document.addEventListener('DOMContentLoaded', () => {
+        document.getElementById('year').textContent = new Date().getFullYear();
+
+        // Apply initial dark mode state and logo
+        const isDarkModeInitial = getDarkModePreference();
+        if (isDarkModeInitial) {
+            body.classList.add('dark-mode');
+        }
+        updateLogo(isDarkModeInitial);
+
+        // Toggle dark mode
+        darkModeToggle.addEventListener('click', () => {
+            const isDark = body.classList.toggle('dark-mode');
+            setDarkModePreference(isDark);
+            updateLogo(isDark);
+        });
+
+        // Toggle FAQ answers with smooth animation
+        faqQuestions.forEach(question => {
+            question.addEventListener('click', () => {
+                const answer = question.nextElementSibling;
+                const isOpen = question.classList.contains('open');
+
+                // Close all other open FAQs
+                faqQuestions.forEach(q => {
+                    if (q !== question && q.classList.contains('open')) {
+                        q.classList.remove('open');
+                        const otherAnswer = q.nextElementSibling;
+                        otherAnswer.classList.remove('open');
+                        otherAnswer.style.maxHeight = null;
+                    }
+                });
+
+                question.classList.toggle('open');
+                answer.classList.toggle('open');
+
+                if (isOpen) {
+                    answer.style.maxHeight = null; // Collapse
+                } else {
+                    answer.style.maxHeight = answer.scrollHeight + "px"; // Expand to content height
+                }
+            });
+        });
+
+        // Calculate and display on page load
+        calculateAndDisplayCarbonFootprint();
     });
   </script>
 </body>
